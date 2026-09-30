@@ -133,7 +133,7 @@ The top features influencing booking completion (exported in `feature_importance
 
 ### Streamlit operations dashboard
 
-The project now includes `app.py`, a SkyNest-inspired Streamlit dashboard based on the supplied booking-search dataset. It provides filter-responsive live KPIs, conversion and route analytics, managed booking and schedule workflows (session based), CSV export, data-quality checks, and an in-app Random Forest conversion scorer.
+The project now includes `app.py`, a SkyNest-inspired Streamlit dashboard based on the supplied booking-search dataset. It provides filter-responsive live KPIs, conversion and route analytics, a booking funnel, hourly-intent and group-demand charts, timed flight scheduling (departure, arrival, journey duration, capacity, gates, fares, and statuses), flexible multi-passenger seat assignment, ancillary fare calculation, booking confirmations, payment records, flight tracking, CSV export, data-quality checks, and an in-app Random Forest conversion scorer.
 
 Run it from the project directory:
 

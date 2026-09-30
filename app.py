@@ -21,13 +21,45 @@ PURPLE, BLUE, GREEN, GOLD = "#6C4CE5", "#3B82F6", "#10B981", "#F59E0B"
 st.set_page_config(page_title="SkyNest | Flight Operations", page_icon="✈️", layout="wide")
 
 st.markdown("""<style>
- .stApp {background:#f7f8fc;color:#182033} .block-container{padding-top:1.7rem;padding-bottom:2rem;max-width:1500px}
- [data-testid='stSidebar']{background:#21154c} [data-testid='stSidebar'] *{color:#f8f7ff!important}
- .metric-card{background:white;border-radius:18px;padding:18px 20px;border:1px solid #edf0f7;box-shadow:0 5px 18px rgba(35,23,74,.05);min-height:130px}
- .metric-label{font-size:.86rem;color:#667085;margin-bottom:9px}.metric-value{font-size:1.7rem;font-weight:750;color:#182033}.metric-note{font-size:.78rem;color:#10a779;margin-top:8px}
- .section-card{background:#fff;border:1px solid #e9eaf1;border-radius:18px;padding:16px 18px;margin-top:8px}
- h1,h2,h3{letter-spacing:-.03em} .caption-muted{color:#667085;font-size:.9rem}
- </style>""", unsafe_allow_html=True)
+/* Application shell */
+.stApp, [data-testid="stAppViewContainer"] {background:linear-gradient(135deg,#f7f5ff 0%,#f7f9fc 46%,#fffaf0 100%);color:#17233c}
+.block-container{padding:2rem 2.5rem 3rem;max-width:1500px}
+[data-testid="stHeader"]{background:rgba(247,248,252,.84);border-bottom:1px solid #eaecf3}
+
+/* Typography: force contrast even when the browser previously used dark mode */
+[data-testid="stMain"] h1,[data-testid="stMain"] h2,[data-testid="stMain"] h3,[data-testid="stMain"] h4{color:#17233c!important;letter-spacing:-.035em}
+[data-testid="stMain"] h1{font-size:2.45rem!important;font-weight:800!important;margin-bottom:.15rem!important}
+[data-testid="stMain"] h2{font-size:1.55rem!important;margin-top:1.4rem!important}
+[data-testid="stMain"] p,[data-testid="stMain"] span,[data-testid="stMain"] label,[data-testid="stMain"] [data-testid="stWidgetLabel"] p{color:#52627d!important}
+.caption-muted{color:#6d7890!important;font-size:.94rem;letter-spacing:.01em}
+
+/* Form controls */
+[data-testid="stMain"] [data-baseweb="input"]>div,[data-testid="stMain"] [data-baseweb="select"]>div,[data-testid="stMain"] input,[data-testid="stMain"] textarea{background:#fff!important;border-color:#dbe1ec!important;color:#17233c!important;border-radius:10px!important}
+[data-testid="stMain"] [data-baseweb="input"] input,[data-testid="stMain"] [data-baseweb="select"] span{color:#17233c!important;-webkit-text-fill-color:#17233c!important}
+[data-testid="stMain"] [data-baseweb="select"] svg{fill:#55627a!important}
+[data-testid="stMain"] [data-baseweb="checkbox"]+div,[data-testid="stMain"] [data-baseweb="checkbox"]+div p{color:#34425d!important}
+[data-testid="stMain"] [data-testid="stNumberInput"] button{background:#f3f0ff!important;color:#5b3cc4!important}
+[data-testid="stMain"] [data-testid="stSlider"] [data-testid="stThumbValue"]{color:#fff!important}
+[data-testid="stMain"] .stButton>button,[data-testid="stMain"] [data-testid="stFormSubmitButton"] button{background:linear-gradient(135deg,#6c4ce5,#8a5cf6)!important;color:#fff!important;border:0!important;border-radius:10px!important;font-weight:700!important;padding:.58rem 1rem!important;box-shadow:0 7px 15px rgba(108,76,229,.20)!important}
+[data-testid="stMain"] .stButton>button:hover,[data-testid="stMain"] [data-testid="stFormSubmitButton"] button:hover{background:linear-gradient(135deg,#5534c6,#7042e4)!important;color:#fff!important}
+
+/* Cards, data and status surfaces */
+.metric-card{background:linear-gradient(145deg,#fff,#fbfbff);border-radius:18px;padding:19px 20px;border:1px solid #e6e9f2;box-shadow:0 10px 25px rgba(31,35,72,.065);min-height:130px;transition:transform .2s}
+.metric-card:hover{transform:translateY(-2px)}
+.metric-label{font-size:.84rem;color:#667085!important;margin-bottom:10px;font-weight:600}.metric-value{font-size:1.8rem;font-weight:800;color:#17233c!important}.metric-note{font-size:.78rem;color:#079669!important;margin-top:9px;font-weight:600}
+.section-card{background:#fff;border:1px solid #e9eaf1;border-radius:18px;padding:16px 18px;margin-top:8px}
+[data-testid="stDataFrame"],[data-testid="stDataEditor"]{border:1px solid #e0e5ef;border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(40,45,80,.04)}
+[data-testid="stAlert"]{border-radius:12px!important;border:0!important}
+[data-testid="stMain"] [data-testid="stProgress"]>div>div>div{background:linear-gradient(90deg,#6c4ce5,#e7c866)!important}
+
+/* Sidebar uses its own dark brand palette */
+[data-testid='stSidebar']{background:linear-gradient(180deg,#251451 0%,#1b103f 100%);border-right:1px solid rgba(255,255,255,.08)}
+[data-testid='stSidebar'] *{color:#f7f4ff!important}
+[data-testid='stSidebar'] [data-baseweb="select"]>div,[data-testid='stSidebar'] [data-baseweb="input"]>div{background:#130b30!important;border-color:#493879!important}
+[data-testid='stSidebar'] [data-baseweb="tag"]{background:#6c4ce5!important}
+[data-testid='stSidebar'] [data-testid="stRadio"] label{padding:4px 7px;border-radius:8px}
+[data-testid='stSidebar'] [data-testid="stRadio"] label:hover{background:rgba(255,255,255,.10)}
+</style>""", unsafe_allow_html=True)
 
 
 @st.cache_data(show_spinner=False)
@@ -119,11 +151,12 @@ def overview(data: pd.DataFrame) -> None:
     completed = data[data.booking_complete.eq(1)]
     conversion = data.booking_complete.mean()
     revenue = completed.apply(simulated_value, axis=1).sum()
+    operations = flight_table()
     c1, c2, c3, c4 = st.columns(4)
     with c1: metric_card("Total booking searches", f"{len(data):,}", "Live filtered dataset", PURPLE)
     with c2: metric_card("Completed bookings", f"{len(completed):,}", f"{conversion:.1%} conversion rate", GREEN)
-    with c3: metric_card("Indicative booking value", money(revenue), "Derived from trip configuration", BLUE)
-    with c4: metric_card("Active flight routes", f"{data.route.nunique():,}", f"Across {data.booking_origin.nunique()} origins", GOLD)
+    with c3: metric_card("Scheduled flights", str(len(operations)), f"{int(operations.available_seats.sum()):,} seats available", BLUE)
+    with c4: metric_card("Managed booking revenue", money(sum(b["amount"] for b in st.session_state.managed_bookings)), "Confirmed in this session", GOLD)
 
     left, right = st.columns((1.25, 1))
     with left:
@@ -143,49 +176,142 @@ def overview(data: pd.DataFrame) -> None:
     display["indicative_value"] = completed.head(len(display)).apply(simulated_value, axis=1).round(0)
     st.dataframe(display, use_container_width=True, hide_index=True, column_config={"indicative_value": st.column_config.NumberColumn("Indicative value ($)", format="$%d")})
 
+    st.subheader("Demand & conversion intelligence")
+    a, b, c = st.columns(3)
+    with a:
+        st.markdown("#### Booking funnel")
+        funnel = pd.Series({"Searches": len(data), "Completed": int(data.booking_complete.sum()), "Abandoned": int((1 - data.booking_complete).sum())})
+        st.bar_chart(funnel, color=PURPLE, height=240)
+        st.caption("Conversion: {:.1%} of filtered searches.".format(conversion))
+    with b:
+        st.markdown("#### Departure-hour intent")
+        hourly = data.groupby("flight_hour").booking_complete.mean().mul(100)
+        st.area_chart(hourly, color=GREEN, height=240)
+        st.caption("Booking completion rate by planned departure hour.")
+    with c:
+        st.markdown("#### Group size demand")
+        groups = data.num_passengers.value_counts().sort_index()
+        st.bar_chart(groups, color=GOLD, height=240)
+        st.caption("Customer search volume by number of passengers.")
+
+    st.subheader("Live flight readiness")
+    readiness = operations[["flight", "available_seats", "capacity", "status"]].copy().set_index("flight")
+    st.bar_chart(readiness[["available_seats", "capacity"]], color=[PURPLE, "#D9DDEF"], height=220)
+    st.caption("Available capacity compared with total configured capacity for the session-managed schedule.")
+
+
+def flight_table() -> pd.DataFrame:
+    flights = pd.DataFrame(st.session_state.flights).copy()
+    booked = pd.DataFrame(st.session_state.managed_bookings)
+    seat_counts = booked.groupby("flight").size() if not booked.empty else pd.Series(dtype=int)
+    flights["arrival"] = flights.apply(lambda r: r.departure + timedelta(hours=float(r.duration_h)), axis=1)
+    flights["booked"] = flights.flight.map(seat_counts).fillna(0).astype(int)
+    flights["available_seats"] = flights.capacity - flights.booked
+    flights["load_factor"] = (flights.booked / flights.capacity * 100).round(1)
+    return flights
+
+
+def seat_labels(capacity: int) -> list[str]:
+    rows = min((capacity + 5) // 6, 45)
+    return [f"{row}{letter}" for row in range(1, rows + 1) for letter in "ABCDEF"][:capacity]
+
 
 def bookings(data: pd.DataFrame) -> None:
-    st.subheader("Booking management")
-    st.caption("Manage an in-session operations queue and export the filtered project records.")
-    with st.expander("＋ Register a managed booking", expanded=False):
-        with st.form("new_booking", clear_on_submit=True):
-            a, b, c = st.columns(3)
-            route = a.selectbox("Route", sorted(data.route.unique()))
-            origin = b.selectbox("Booking origin", sorted(data.booking_origin.unique()))
-            passengers = c.number_input("Passengers", 1, 9, 1)
-            lead = a.number_input("Purchase lead (days)", 0, 867, 30)
-            trip = b.selectbox("Trip type", sorted(data.trip_type.unique()))
-            channel = c.selectbox("Channel", sorted(data.sales_channel.unique()))
-            if st.form_submit_button("Create booking", type="primary"):
-                key = hashlib.sha1(f"{route}{origin}{datetime.now()}".encode()).hexdigest()[:7].upper()
-                st.session_state.managed_bookings.append({"booking_id": f"OPS-{key}", "route": route, "origin": origin, "passengers": passengers, "lead_days": lead, "trip_type": trip, "channel": channel, "status": "Confirmed", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")})
-                st.success("Managed booking created in this session.")
+    st.subheader("Bookings & seat assignment")
+    st.caption("Create confirmed bookings with fare calculation, passenger seats, and a payment record.")
+    flights = flight_table()
+    choices = {f"{r.flight} · {r.route} · {r.departure:%d %b %H:%M} · {money(r.fare)}": r.flight for _, r in flights.iterrows()}
+    chosen_label = st.selectbox("Select a scheduled flight", list(choices))
+    chosen = flights.loc[flights.flight.eq(choices[chosen_label])].iloc[0]
+    existing = pd.DataFrame(st.session_state.managed_bookings)
+    occupied = set(existing.loc[existing.flight.eq(chosen.flight), "seats"].explode().dropna()) if not existing.empty else set()
+    open_seats = [seat for seat in seat_labels(int(chosen.capacity)) if seat not in occupied]
+    st.markdown(f"**{chosen.airline} · Gate {chosen.gate}**  \\  Departure: **{chosen.departure:%d %b %Y, %H:%M}**  \\  Arrival: **{chosen.arrival:%d %b %Y, %H:%M}**  \\  Journey: **{chosen.duration_h:.1f} hours**")
+    st.progress(min(float(chosen.booked / chosen.capacity), 1.0), text=f"{len(open_seats)} of {chosen.capacity} seats available · {chosen.load_factor}% occupied")
+    with st.form("new_booking", clear_on_submit=True):
+        a, b, c = st.columns(3)
+        name = a.text_input("Lead passenger name", "")
+        email = b.text_input("Email", "")
+        passengers = c.number_input("Passengers", 1, min(9, len(open_seats)), 1)
+        selected_seats = st.multiselect("Choose seats", open_seats, help="Select one seat per passenger. You can select up to the number of passengers entered above.")
+        st.caption("Seat selection is flexible while you choose; booking confirmation requires exactly one seat for every passenger.")
+        x, y, z = st.columns(3)
+        baggage = x.checkbox("Extra baggage (+$45 per passenger)")
+        preferred = y.checkbox("Preferred seat (+$25 per passenger)")
+        meal = z.checkbox("In-flight meal (+$18 per passenger)")
+        amount = float(chosen.fare) * passengers + passengers * (45 * baggage + 25 * preferred + 18 * meal)
+        st.info(f"Estimated total: {money(amount)} · Base fare: {money(float(chosen.fare))} per passenger")
+        submitted = st.form_submit_button("Confirm booking & payment", type="primary")
+        if submitted:
+            if not name.strip() or "@" not in email:
+                st.error("Enter a lead passenger name and a valid email address.")
+            elif len(selected_seats) != passengers:
+                st.error("Select exactly one seat for each passenger.")
+            else:
+                key = hashlib.sha1(f"{chosen.flight}{email}{datetime.now()}".encode()).hexdigest()[:7].upper()
+                booking = {"booking_id": f"BK-{key}", "flight": chosen.flight, "route": chosen.route, "passenger": name, "email": email, "passengers": int(passengers), "seats": selected_seats, "departure": chosen.departure.strftime("%Y-%m-%d %H:%M"), "arrival": chosen.arrival.strftime("%Y-%m-%d %H:%M"), "journey_hours": chosen.duration_h, "amount": round(amount, 2), "status": "Confirmed", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")}
+                st.session_state.managed_bookings.append(booking)
+                st.session_state.payments.append({"payment_id": f"PAY-{key}", "booking_id": booking["booking_id"], "passenger": name, "amount": booking["amount"], "method": "Card", "status": "Paid", "paid_at": booking["created_at"]})
+                st.session_state.activity.insert(0, {"time": "Just now", "event": f"{booking['booking_id']} confirmed on {chosen.flight}", "type": "Booking"})
+                st.success(f"Booking {booking['booking_id']} confirmed. Seats: {', '.join(selected_seats)}")
+    st.markdown("#### Seat map")
+    visual = [f"🟥 {s}" if s in occupied else f"🟨 {s}" for s in seat_labels(int(chosen.capacity))[:48]]
+    st.caption("🟥 Occupied · 🟨 Available · Use the selector above to reserve available seats.")
+    st.markdown("<br>".join(" &nbsp; ".join(visual[i:i+6]) for i in range(0, len(visual), 6)), unsafe_allow_html=True)
     if st.session_state.managed_bookings:
-        st.markdown("#### Managed booking queue")
-        st.dataframe(pd.DataFrame(st.session_state.managed_bookings), hide_index=True, use_container_width=True)
-    st.markdown("#### Dataset search records")
-    table = data.copy()
-    table.insert(0, "search_id", [f"SR-{i:06d}" for i in table.index])
-    st.dataframe(table.head(500), use_container_width=True, hide_index=True)
-    st.download_button("Download filtered records (CSV)", data.to_csv(index=False).encode("utf-8"), "filtered_booking_records.csv", "text/csv")
+        st.markdown("#### Confirmed booking queue")
+        st.dataframe(pd.DataFrame(st.session_state.managed_bookings), hide_index=True, use_container_width=True, column_config={"amount": st.column_config.NumberColumn("Amount", format="$%.2f")})
+    st.download_button("Download filtered historical records (CSV)", data.to_csv(index=False).encode("utf-8"), "filtered_booking_records.csv", "text/csv")
 
 
 def schedule() -> None:
-    st.subheader("Flight schedule management")
-    st.caption("This operational schedule is session-managed because the supplied dataset contains customer searches, not flight inventory.")
+    st.subheader("Flights & schedule")
+    st.caption("Build a live flight timetable with departure, arrival, journey time, capacity, fare, gate, and service status.")
     with st.form("add_flight", clear_on_submit=True):
         a, b, c, d = st.columns(4)
         code = a.text_input("Flight number", "SN-900")
-        route = b.text_input("Route code", "AKLDEL")
-        departure = c.time_input("Departure time")
-        capacity = d.number_input("Seat capacity", 1, 600, 180)
-        if st.form_submit_button("Add flight", type="primary"):
-            st.session_state.flights.append({"flight": code.upper(), "route": route.upper(), "departure": departure.strftime("%H:%M"), "status": "Scheduled", "capacity": capacity})
-            st.success(f"{code.upper()} added to the live session schedule.")
-    flight_df = pd.DataFrame(st.session_state.flights)
-    flight_df["departure"] = pd.to_datetime(flight_df.departure, format="%H:%M").dt.time.astype(str)
-    st.data_editor(flight_df, use_container_width=True, hide_index=True, disabled=["flight"], key="flight_editor")
-    st.info("Edits made in the grid are reviewable in the interface; use the form to register schedule entries.")
+        airline = b.text_input("Airline", "SkyNest Air")
+        route = c.text_input("Route code (e.g. CDGJFK)", "AKLDEL")
+        flight_date = d.date_input("Departure date", date.today() + timedelta(days=1))
+        departure_time = a.time_input("Departure time", datetime.strptime("09:00", "%H:%M").time())
+        duration = b.number_input("Journey time (hours)", 0.5, 24.0, 5.5, 0.1)
+        fare = c.number_input("Base fare (USD)", 10.0, 10000.0, 450.0, 5.0)
+        capacity = d.number_input("Seat capacity", 6, 270, 180, 6)
+        gate = a.text_input("Gate", "A01")
+        status = b.selectbox("Flight status", ["Scheduled", "On time", "Boarding", "Delayed", "Cancelled"])
+        if st.form_submit_button("Add flight to schedule", type="primary"):
+            departure = datetime.combine(flight_date, departure_time)
+            st.session_state.flights.append({"flight": code.upper(), "airline": airline, "route": route.upper().replace("-", ""), "departure": departure, "duration_h": float(duration), "fare": float(fare), "capacity": int(capacity), "gate": gate.upper(), "status": status})
+            st.session_state.activity.insert(0, {"time": "Just now", "event": f"Flight {code.upper()} added to schedule", "type": "Schedule"})
+            st.success(f"{code.upper()} added. Arrival: {(departure + timedelta(hours=float(duration))):%d %b %Y, %H:%M}")
+    display = flight_table()[["flight", "airline", "route", "departure", "arrival", "duration_h", "gate", "fare", "capacity", "booked", "available_seats", "load_factor", "status"]].copy()
+    display = display.rename(columns={"duration_h": "journey_hours", "fare": "base_fare"})
+    st.dataframe(display, use_container_width=True, hide_index=True, column_config={"departure": st.column_config.DatetimeColumn("Departure", format="DD MMM YYYY, HH:mm"), "arrival": st.column_config.DatetimeColumn("Arrival", format="DD MMM YYYY, HH:mm"), "base_fare": st.column_config.NumberColumn("Base fare", format="$%.2f"), "load_factor": st.column_config.ProgressColumn("Load factor", min_value=0, max_value=100, format="%.1f%%")})
+
+
+def payments() -> None:
+    st.subheader("Payments & revenue")
+    records = pd.DataFrame(st.session_state.payments)
+    total = float(records.amount.sum()) if not records.empty else 0.0
+    a, b, c = st.columns(3)
+    a.metric("Collected revenue", money(total))
+    b.metric("Paid transactions", len(records))
+    c.metric("Average booking value", money(total / len(records)) if len(records) else "$0")
+    if records.empty:
+        st.info("Payments are created automatically when a seat booking is confirmed.")
+    else:
+        st.dataframe(records, hide_index=True, use_container_width=True, column_config={"amount": st.column_config.NumberColumn("Amount", format="$%.2f")})
+
+
+def tracking() -> None:
+    st.subheader("Flight tracking & activity")
+    flights = flight_table()
+    for _, f in flights.iterrows():
+        status_color = {"Boarding": "🟢", "On time": "🟢", "Scheduled": "🔵", "Delayed": "🟠", "Cancelled": "🔴"}.get(f.status, "⚪")
+        st.markdown(f"### {status_color} {f.flight} · {f.route}  ")
+        st.caption(f"{f.airline} | Gate {f.gate} | Departs {f.departure:%d %b %H:%M} | Arrives {f.arrival:%d %b %H:%M} | {f.available_seats} seats available")
+    st.markdown("#### Recent operational activity")
+    st.dataframe(pd.DataFrame(st.session_state.activity), hide_index=True, use_container_width=True)
 
 
 def predictor(data: pd.DataFrame) -> None:
@@ -259,8 +385,10 @@ def main() -> None:
         st.warning("The current controls produce no records. Adjust the filters in the sidebar.")
         st.stop()
     if page == "Overview": overview(filtered)
-    elif page == "Bookings": bookings(filtered)
-    elif page == "Flight schedule": schedule()
+    elif page == "Bookings & seats": bookings(filtered)
+    elif page == "Flights & schedule": schedule()
+    elif page == "Payments": payments()
+    elif page == "Flight tracking": tracking()
     elif page == "Conversion predictor": predictor(data)
     elif page == "Analytics & model": analytics(filtered)
     else: quality(filtered)
