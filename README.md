@@ -121,6 +121,7 @@ The top features influencing booking completion (exported in `feature_importance
 .
 ├── customer_booking.csv       # Raw dataset (50,000 records)
 ├── booking_prediction.ipynb   # Complete analysis & modeling Jupyter Notebook
+├── dashboard.html             # Interactive SkyNest Booking & ML Prediction Dashboard
 ├── feature_importance.csv     # Exported feature importances dataset
 ├── model_metrics.csv          # Exported evaluation metrics summary
 └── README.md                  # Comprehensive project documentation
@@ -129,6 +130,19 @@ The top features influencing booking completion (exported in `feature_importance
 ---
 
 ## 🚀 Getting Started
+
+### Streamlit operations dashboard
+
+The project now includes `app.py`, a SkyNest-inspired Streamlit dashboard based on the supplied booking-search dataset. It provides filter-responsive live KPIs, conversion and route analytics, managed booking and schedule workflows (session based), CSV export, data-quality checks, and an in-app Random Forest conversion scorer.
+
+Run it from the project directory:
+
+```bash
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+The dashboard opens at `http://localhost:8501`. The schedule and managed-booking queue are deliberately session-managed: `customer_booking.csv` is a historical search/conversion dataset and does not include mutable inventory or flight schedule tables.
 
 ### Prerequisites
 
