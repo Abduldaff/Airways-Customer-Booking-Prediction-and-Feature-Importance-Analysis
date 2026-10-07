@@ -48,6 +48,22 @@ st.markdown("""<style>
 .metric-card:hover{transform:translateY(-2px)}
 .metric-label{font-size:.84rem;color:#667085!important;margin-bottom:10px;font-weight:600}.metric-value{font-size:1.8rem;font-weight:800;color:#17233c!important}.metric-note{font-size:.78rem;color:#079669!important;margin-top:9px;font-weight:600}
 .section-card{background:#fff;border:1px solid #e9eaf1;border-radius:18px;padding:16px 18px;margin-top:8px}
+.hero-shell{background:linear-gradient(135deg,rgba(108,76,229,.12),rgba(59,130,246,.10),rgba(245,158,11,.12));border:1px solid rgba(108,76,229,.14);border-radius:26px;padding:1.25rem 1.4rem 1.1rem;box-shadow:0 18px 48px rgba(45,52,86,.08);margin-bottom:1rem}
+.hero-topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.hero-brand{display:flex;align-items:center;gap:.8rem}
+.brand-badge{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#6c4ce5,#3b82f6);color:#fff;font-size:1.4rem;box-shadow:0 10px 24px rgba(108,76,229,.32)}
+.hero-title{font-size:2.1rem!important;font-weight:800!important;margin:0!important;color:#17233c!important}
+.hero-subtitle{font-size:1rem;color:#52627d!important;margin-top:.2rem}
+.pill{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;background:rgba(16,185,129,.10);color:#0a7f61!important;border:1px solid rgba(16,185,129,.18);font-size:.76rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.pill.purple{background:rgba(108,76,229,.10);border-color:rgba(108,76,229,.18);color:#5437c7!important}
+.summary-strip{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:.9rem;margin-top:1rem}
+.summary-stat{background:rgba(255,255,255,.72);backdrop-filter:blur(6px);border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:.8rem .95rem}
+.summary-label{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:#6d7890!important;font-weight:700}
+.summary-value{font-size:1.3rem;font-weight:800;color:#17233c!important;margin-top:.25rem}
+.summary-note{font-size:.72rem;color:#0d8a5d!important;font-weight:600;margin-top:.15rem}
+.ticket-card{background:linear-gradient(135deg,#ffffff,#f8f6ff);border:1px solid rgba(108,76,229,.12);border-radius:20px;padding:1.1rem 1.15rem;box-shadow:0 14px 30px rgba(31,35,72,.06)}
+.ticket-card h4{margin:0 0 .6rem;color:#17233c!important}
+.ticket-tag{display:inline-flex;align-items:center;padding:.35rem .7rem;border-radius:999px;background:#eef2ff;color:#3c4cc8;font-size:.72rem;font-weight:700;margin-right:.5rem}
 [data-testid="stDataFrame"],[data-testid="stDataEditor"]{border:1px solid #e0e5ef;border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(40,45,80,.04)}
 [data-testid="stAlert"]{border-radius:12px!important;border:0!important}
 [data-testid="stMain"] [data-testid="stProgress"]>div>div>div{background:linear-gradient(90deg,#6c4ce5,#e7c866)!important}
@@ -109,21 +125,35 @@ def simulated_value(row: pd.Series) -> float:
 
 
 def init_state() -> None:
-    if "managed_bookings" not in st.session_state:
-        st.session_state.managed_bookings = []
-    if "payments" not in st.session_state:
-        st.session_state.payments = []
-    if "activity" not in st.session_state:
-        st.session_state.activity = [
-            {"time": "Just now", "event": "Operations workspace opened", "type": "System"},
-            {"time": "Today", "event": "Customer search dataset synchronised", "type": "Data"},
-        ]
-    if "flights" not in st.session_state:
-        st.session_state.flights = [
-            {"flight": "SN-218", "airline": "SkyNest Air", "route": "AKLDEL", "departure": datetime.combine(date.today(), datetime.strptime("09:00", "%H:%M").time()), "duration_h": 5.5, "fare": 490.0, "capacity": 180, "gate": "A12", "status": "Boarding"},
-            {"flight": "SN-404", "airline": "SkyNest Air", "route": "DMKICN", "departure": datetime.combine(date.today(), datetime.strptime("13:45", "%H:%M").time()), "duration_h": 6.2, "fare": 625.0, "capacity": 220, "gate": "B06", "status": "On time"},
-            {"flight": "SN-672", "airline": "SkyNest Air", "route": "PENTPE", "departure": datetime.combine(date.today() + timedelta(days=1), datetime.strptime("18:20", "%H:%M").time()), "duration_h": 4.1, "fare": 375.0, "capacity": 168, "gate": "C18", "status": "Scheduled"},
-        ]
+    today = date.today()
+    st.session_state.managed_bookings = [
+        {"booking_id": "BK-1024", "flight": "SN-218", "route": "AKLDEL", "passenger": "Alicia Stone", "email": "alicia.stone@gmail.com", "passengers": 2, "seats": ["A1", "A2"], "departure": datetime.combine(today, datetime.strptime("09:00", "%H:%M").time()).strftime("%Y-%m-%d %H:%M"), "arrival": (datetime.combine(today, datetime.strptime("09:00", "%H:%M").time()) + timedelta(hours=5.5)).strftime("%Y-%m-%d %H:%M"), "journey_hours": 5.5, "amount": 1248.00, "status": "Confirmed", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"booking_id": "BK-2047", "flight": "SN-404", "route": "DMKICN", "passenger": "Daniel Brooks", "email": "daniel.brooks@outlook.com", "passengers": 1, "seats": ["C14"], "departure": datetime.combine(today, datetime.strptime("13:45", "%H:%M").time()).strftime("%Y-%m-%d %H:%M"), "arrival": (datetime.combine(today, datetime.strptime("13:45", "%H:%M").time()) + timedelta(hours=6.2)).strftime("%Y-%m-%d %H:%M"), "journey_hours": 6.2, "amount": 702.00, "status": "Confirmed", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"booking_id": "BK-3318", "flight": "SN-672", "route": "PENTPE", "passenger": "Nadia Rahman", "email": "nadia.rahman@mail.com", "passengers": 3, "seats": ["D5", "D6", "D7"], "departure": datetime.combine(today + timedelta(days=1), datetime.strptime("18:20", "%H:%M").time()).strftime("%Y-%m-%d %H:%M"), "arrival": (datetime.combine(today + timedelta(days=1), datetime.strptime("18:20", "%H:%M").time()) + timedelta(hours=4.1)).strftime("%Y-%m-%d %H:%M"), "journey_hours": 4.1, "amount": 1775.00, "status": "Confirmed", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"booking_id": "BK-4422", "flight": "SN-110", "route": "DXBAMS", "passenger": "Oliver Lee", "email": "oliver.lee@skyline.io", "passengers": 2, "seats": ["B11", "B12"], "departure": datetime.combine(today + timedelta(days=2), datetime.strptime("08:10", "%H:%M").time()).strftime("%Y-%m-%d %H:%M"), "arrival": (datetime.combine(today + timedelta(days=2), datetime.strptime("08:10", "%H:%M").time()) + timedelta(hours=4.8)).strftime("%Y-%m-%d %H:%M"), "journey_hours": 4.8, "amount": 1184.00, "status": "Checked in", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"booking_id": "BK-5189", "flight": "SN-901", "route": "LHRJFK", "passenger": "Sophia Patel", "email": "sophia.patel@travelmail.net", "passengers": 2, "seats": ["E8", "E9"], "departure": datetime.combine(today + timedelta(days=1), datetime.strptime("21:35", "%H:%M").time()).strftime("%Y-%m-%d %H:%M"), "arrival": (datetime.combine(today + timedelta(days=1), datetime.strptime("21:35", "%H:%M").time()) + timedelta(hours=8.4)).strftime("%Y-%m-%d %H:%M"), "journey_hours": 8.4, "amount": 2590.00, "status": "Confirmed", "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+    ]
+    st.session_state.payments = [
+        {"payment_id": "PAY-1024", "booking_id": "BK-1024", "passenger": "Alicia Stone", "amount": 1248.00, "method": "Card", "status": "Paid", "paid_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"payment_id": "PAY-2047", "booking_id": "BK-2047", "passenger": "Daniel Brooks", "amount": 702.00, "method": "Wallet", "status": "Paid", "paid_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"payment_id": "PAY-3318", "booking_id": "BK-3318", "passenger": "Nadia Rahman", "amount": 1775.00, "method": "Card", "status": "Paid", "paid_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"payment_id": "PAY-4422", "booking_id": "BK-4422", "passenger": "Oliver Lee", "amount": 1184.00, "method": "Bank Transfer", "status": "Paid", "paid_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+        {"payment_id": "PAY-5189", "booking_id": "BK-5189", "passenger": "Sophia Patel", "amount": 2590.00, "method": "Card", "status": "Paid", "paid_at": datetime.now().strftime("%Y-%m-%d %H:%M")},
+    ]
+    st.session_state.activity = [
+        {"time": "Just now", "event": "Operations workspace opened", "type": "System"},
+        {"time": "Today", "event": "Customer search dataset synchronised", "type": "Data"},
+        {"time": "Today", "event": "5 new flight bookings confirmed and payment settled", "type": "Booking"},
+    ]
+    st.session_state.flights = [
+        {"flight": "SN-218", "airline": "SkyNest Air", "route": "AKLDEL", "departure": datetime.combine(today, datetime.strptime("09:00", "%H:%M").time()), "duration_h": 5.5, "fare": 490.0, "capacity": 180, "gate": "A12", "status": "Boarding"},
+        {"flight": "SN-404", "airline": "SkyNest Air", "route": "DMKICN", "departure": datetime.combine(today, datetime.strptime("13:45", "%H:%M").time()), "duration_h": 6.2, "fare": 625.0, "capacity": 220, "gate": "B06", "status": "On time"},
+        {"flight": "SN-672", "airline": "SkyNest Air", "route": "PENTPE", "departure": datetime.combine(today + timedelta(days=1), datetime.strptime("18:20", "%H:%M").time()), "duration_h": 4.1, "fare": 375.0, "capacity": 168, "gate": "C18", "status": "Scheduled"},
+        {"flight": "SN-110", "airline": "SkyNest Air", "route": "DXBAMS", "departure": datetime.combine(today + timedelta(days=2), datetime.strptime("08:10", "%H:%M").time()), "duration_h": 4.8, "fare": 420.0, "capacity": 160, "gate": "D09", "status": "On time"},
+        {"flight": "SN-901", "airline": "SkyNest Air", "route": "LHRJFK", "departure": datetime.combine(today + timedelta(days=1), datetime.strptime("21:35", "%H:%M").time()), "duration_h": 8.4, "fare": 760.0, "capacity": 210, "gate": "E22", "status": "Delayed"},
+        {"flight": "SN-350", "airline": "SkyNest Air", "route": "SINBKK", "departure": datetime.combine(today + timedelta(days=3), datetime.strptime("12:15", "%H:%M").time()), "duration_h": 3.4, "fare": 290.0, "capacity": 150, "gate": "F04", "status": "Scheduled"},
+        {"flight": "SN-580", "airline": "SkyNest Air", "route": "SYDHKG", "departure": datetime.combine(today + timedelta(days=4), datetime.strptime("06:40", "%H:%M").time()), "duration_h": 7.6, "fare": 690.0, "capacity": 200, "gate": "G11", "status": "Boarding"},
+    ]
 
 
 def sidebar(data: pd.DataFrame) -> tuple[str, pd.DataFrame]:
@@ -145,6 +175,60 @@ def sidebar(data: pd.DataFrame) -> tuple[str, pd.DataFrame]:
 
 def metric_card(label: str, value: str, note: str, accent: str) -> None:
     st.markdown(f'<div class="metric-card" style="border-top:4px solid {accent}"><div class="metric-label">{label}</div><div class="metric-value">{value}</div><div class="metric-note">{note}</div></div>', unsafe_allow_html=True)
+
+
+def page_hero(page_name: str, subtitle: str) -> None:
+    """Render a premium page header for a more polished booking dashboard."""
+    page_map = {
+        "Overview": "Premium network overview",
+        "Bookings & seats": "Passenger booking desk",
+        "Flights & schedule": "Operations and fleet timetable",
+        "Payments": "Revenue and settlement summary",
+        "Flight tracking": "Live movement status board",
+        "Conversion predictor": "AI-assisted conversion scoring",
+        "Analytics & model": "Model performance and trends",
+        "Data quality": "Data hygiene and integrity report",
+    }
+    st.markdown(
+        f"""
+        <div class="hero-shell">
+            <div class="hero-topbar">
+                <div class="hero-brand">
+                    <div class="brand-badge">✈️</div>
+                    <div>
+                        <div class="pill purple">SkyNest</div>
+                        <div class="hero-subtitle">{page_map.get(page_name, 'Operations workspace')}</div>
+                    </div>
+                </div>
+                <div class="pill">{subtitle}</div>
+            </div>
+            <h1 class="hero-title">{page_name}</h1>
+            <div class="summary-strip">
+                <div class="summary-stat">
+                    <div class="summary-label">Network</div>
+                    <div class="summary-value">{len(st.session_state.flights)}</div>
+                    <div class="summary-note">active flights</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-label">Revenue</div>
+                    <div class="summary-value">{money(sum(b['amount'] for b in st.session_state.managed_bookings))}</div>
+                    <div class="summary-note">this session</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-label">Seats</div>
+                    <div class="summary-value">{sum(f['capacity'] for f in st.session_state.flights)}</div>
+                    <div class="summary-note">available capacity</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="summary-label">Status</div>
+                    <div class="summary-value">Live</div>
+                    <div class="summary-note">system online</div>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def overview(data: pd.DataFrame) -> None:
@@ -217,8 +301,17 @@ def seat_labels(capacity: int) -> list[str]:
 
 
 def bookings(data: pd.DataFrame) -> None:
-    st.subheader("Bookings & seat assignment")
-    st.caption("Create confirmed bookings with fare calculation, passenger seats, and a payment record.")
+    st.markdown(
+        """
+        <div class="ticket-card">
+            <div class="ticket-tag">Premium cabin</div>
+            <div class="ticket-tag">Instant confirmation</div>
+            <h4>Reserve a seat with a premium booking experience</h4>
+            <div class="caption-muted">Create confirmed bookings with fare calculation, passenger seats, and a payment record.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     flights = flight_table()
     choices = {f"{r.flight} · {r.route} · {r.departure:%d %b %H:%M} · {money(r.fare)}": r.flight for _, r in flights.iterrows()}
     chosen_label = st.selectbox("Select a scheduled flight", list(choices))
@@ -379,8 +472,8 @@ def main() -> None:
         st.error("customer_booking.csv was not found beside app.py.")
         st.stop()
     page, filtered = sidebar(data)
-    st.title("Overview" if page == "Overview" else page)
-    st.markdown("<p class='caption-muted'>Flight booking management and conversion intelligence · refreshed on each interaction</p>", unsafe_allow_html=True)
+    subtle_label = "Refreshed on each interaction"
+    page_hero(page, subtle_label)
     if filtered.empty:
         st.warning("The current controls produce no records. Adjust the filters in the sidebar.")
         st.stop()
