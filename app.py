@@ -307,33 +307,81 @@ def bookings(data: pd.DataFrame) -> None:
             <div class="ticket-tag">Premium cabin</div>
             <div class="ticket-tag">Instant confirmation</div>
             <h4>Reserve a seat with a premium booking experience</h4>
-            <div class="caption-muted">Create confirmed bookings with fare calculation, passenger seats, and a payment record.</div>
+            <div class="caption-muted">Live booking flow with route discovery, seat choice, ancillaries, and instant confirmation.</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
     flights = flight_table()
-    choices = {f"{r.flight} · {r.route} · {r.departure:%d %b %H:%M} · {money(r.fare)}": r.flight for _, r in flights.iterrows()}
-    chosen_label = st.selectbox("Select a scheduled flight", list(choices))
+    route_filter = st.selectbox("Choose route", ["All routes"] + sorted(flights.route.unique().tolist()))
+    fare_limit = st.slider("Maximum fare", 200, 1000, 1000, 50)
+    cabin = st.selectbox("Cabin class", ["Economy", "Premium Economy", "Business"])
+    filtered = flights.copy()
+    if route_filter != "All routes":
+        filtered = filtered[filtered.route == route_filter]
+    filtered = filtered[filtered.fare <= fare_limit]
+
+    if filtered.empty:
+        st.info("No flights match your current filters. Increase the max fare or choose a broader route.")
+        return
+
+    choices = {f"{r.flight} · {r.route} · {r.departure:%d %b %H:%M} · {money(r.fare)} · {r.available_seats} seats left": r.flight for _, r in filtered.iterrows()}
+    chosen_label = st.selectbox("Select a flight", list(choices), index=0)
     chosen = flights.loc[flights.flight.eq(choices[chosen_label])].iloc[0]
     existing = pd.DataFrame(st.session_state.managed_bookings)
     occupied = set(existing.loc[existing.flight.eq(chosen.flight), "seats"].explode().dropna()) if not existing.empty else set()
     open_seats = [seat for seat in seat_labels(int(chosen.capacity)) if seat not in occupied]
-    st.markdown(f"**{chosen.airline} · Gate {chosen.gate}**  \\  Departure: **{chosen.departure:%d %b %Y, %H:%M}**  \\  Arrival: **{chosen.arrival:%d %b %Y, %H:%M}**  \\  Journey: **{chosen.duration_h:.1f} hours**")
-    st.progress(min(float(chosen.booked / chosen.capacity), 1.0), text=f"{len(open_seats)} of {chosen.capacity} seats available · {chosen.load_factor}% occupied")
+
+    left, right = st.columns([1.7, 1])
+    with left:
+        st.markdown(f"**{chosen.airline} · Gate {chosen.gate}**  \\  Departure: **{chosen.departure:%d %b %Y, %H:%M}**  \\  Arrival: **{chosen.arrival:%d %b %Y, %H:%M}**  \\  Journey: **{chosen.duration_h:.1f} hours**")
+        st.progress(min(float(chosen.booked / chosen.capacity), 1.0), text=f"{len(open_seats)} of {chosen.capacity} seats available · {chosen.load_factor}% occupied")
+    with right:
+        st.markdown(
+            f"""
+            <div class="ticket-card">
+                <h4>Live pricing</h4>
+                <div class="ticket-tag">{cabin}</div>
+                <div class="ticket-tag">{len(open_seats)} seats</div>
+                <div class="caption-muted">Updated {datetime.now().strftime('%H:%M:%S')}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
     with st.form("new_booking", clear_on_submit=True):
         a, b, c = st.columns(3)
         name = a.text_input("Lead passenger name", "")
         email = b.text_input("Email", "")
         passengers = c.number_input("Passengers", 1, min(9, len(open_seats)), 1)
-        selected_seats = st.multiselect("Choose seats", open_seats, help="Select one seat per passenger. You can select up to the number of passengers entered above.")
+
+        selected_seats = st.multiselect("Choose seats", open_seats, help="Select one seat per passenger.")
         st.caption("Seat selection is flexible while you choose; booking confirmation requires exactly one seat for every passenger.")
+
         x, y, z = st.columns(3)
         baggage = x.checkbox("Extra baggage (+$45 per passenger)")
         preferred = y.checkbox("Preferred seat (+$25 per passenger)")
         meal = z.checkbox("In-flight meal (+$18 per passenger)")
-        amount = float(chosen.fare) * passengers + passengers * (45 * baggage + 25 * preferred + 18 * meal)
-        st.info(f"Estimated total: {money(amount)} · Base fare: {money(float(chosen.fare))} per passenger")
+        travel_protection = st.checkbox("Travel protection (+$35 per passenger)", value=True)
+
+        base_amount = float(chosen.fare) * passengers
+        extras_total = passengers * (45 * baggage + 25 * preferred + 18 * meal + 35 * travel_protection)
+        amount = base_amount + extras_total
+
+        st.markdown(
+            f"""
+            <div class="ticket-card">
+                <h4>Booking summary</h4>
+                <div>Cabin: <strong>{cabin}</strong></div>
+                <div>Base fare: <strong>{money(base_amount)}</strong></div>
+                <div>Extras: <strong>{money(extras_total)}</strong></div>
+                <div style='font-size:1.35rem; font-weight:800; margin-top:.5rem;'>Total: {money(amount)}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         submitted = st.form_submit_button("Confirm booking & payment", type="primary")
         if submitted:
             if not name.strip() or "@" not in email:
@@ -347,6 +395,7 @@ def bookings(data: pd.DataFrame) -> None:
                 st.session_state.payments.append({"payment_id": f"PAY-{key}", "booking_id": booking["booking_id"], "passenger": name, "amount": booking["amount"], "method": "Card", "status": "Paid", "paid_at": booking["created_at"]})
                 st.session_state.activity.insert(0, {"time": "Just now", "event": f"{booking['booking_id']} confirmed on {chosen.flight}", "type": "Booking"})
                 st.success(f"Booking {booking['booking_id']} confirmed. Seats: {', '.join(selected_seats)}")
+
     st.markdown("#### Seat map")
     visual = [f"🟥 {s}" if s in occupied else f"🟨 {s}" for s in seat_labels(int(chosen.capacity))[:48]]
     st.caption("🟥 Occupied · 🟨 Available · Use the selector above to reserve available seats.")
